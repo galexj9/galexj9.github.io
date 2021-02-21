@@ -1,6 +1,6 @@
 
 let boids = [];
-let boidCount = 50;
+let boidCount = 75;
 let sliders;
 
 function setup() {
@@ -9,7 +9,7 @@ function setup() {
   createCanvas(window.innerWidth - 20, window.innerHeight - 20);
 
   //default separation, alignment, and cohesion values
-  sliders = createSliders(1.6, 1.4, 1.5);
+  sliders = createSliders(1.5, 1.2, 1);
 
   for(let i = 0; i < boidCount; i++)
     boids.push(new Boid(width/2, height/2));
@@ -32,15 +32,15 @@ function draw() {
 function createSliders(x,y,z) {
   let sepSlider, alignSlider, cohetSlider;
 
-  sepSlider = createSlider(0, 5, x, .05);
+  sepSlider = createSlider(0, 10, x, .1);
   sepSlider.position(10, 30);
   sepSlider.style('width', '80px');
 
-  alignSlider = createSlider(0, 5, y, .05);
+  alignSlider = createSlider(0, 10, y, .1);
   alignSlider.position(100, 30);
   alignSlider.style('width', '80px');
 
-  cohetSlider = createSlider(0, 5, z, .05);
+  cohetSlider = createSlider(0, 5, z, .1);
   cohetSlider.position(200, 30);
   cohetSlider.style('width', '80px');
 
