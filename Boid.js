@@ -55,7 +55,6 @@ class Boid {
     scale(this.r);
 
     if(this.shape == "circle") {
-      fill(this.color.)
       ellipse(0,0, this.r);
     } else {
       shapes[this.shape].forEach(v => vertex(v[0], v[1]));
