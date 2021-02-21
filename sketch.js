@@ -9,7 +9,7 @@ function setup() {
   createCanvas(window.innerWidth - 20, window.innerHeight - 20);
 
   //default separation, alignment, and cohesion values
-  sliders = createSliders(1.6, 1.2, 1.2);
+  sliders = createSliders(1.6, 1.4, 1.5);
 
   for(let i = 0; i < boidCount; i++)
     boids.push(new Boid(width/2, height/2));

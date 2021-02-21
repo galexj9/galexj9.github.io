@@ -21,9 +21,9 @@ class Boid {
     this.acc = createVector(0, 0);
     this.color = color(random(360), random(75, 100), random(75, 100));  //colorMode is HSB from sketch setup()
     this.r = random(width/400, width/200); //adjust addForce(f) if changed
-    this.sight = 75; //the view radius of each boid for calculating movement
-    this.maxSpeed = random(3, 4);
-    this.maxForce = .05;
+    this.sight = 100; //the view radius of each boid for calculating movement
+    this.maxSpeed = randomGaussian(4, .4);
+    this.maxForce = randomGaussian(.4, 0.01);
     this.shape = random(shapes);
   }
 
