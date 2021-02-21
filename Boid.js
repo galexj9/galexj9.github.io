@@ -1,18 +1,18 @@
 //shapes should be size (-2, -2) x (2, 2)
 //forward facing negative y
-let shapes = [
-  //4 point concave star
-  [[-0.6, 0.6], [0, 2], [0.6, 0.6], [2, 0],
-  [0.6, -0.4], [0, -2], [-0.6, -0.4], [-2, 0]],
-  //triangle
-  [[0, -2], [-1, 2], [1, 2]],
+let shapes = {
+  star: [[-0.6, 0.6], [0, 2], [0.6, 0.6], [2, 0],
+    [0.6, -0.4], [0, -2], [-0.6, -0.4], [-2, 0]],
 
-  //plus sign
-  [[-.2, 2], [.2, 2], [.2, .2],
-  [2, .2], [2, -.2], [.2, -.2],
-  [.2, -2], [-.2, -2], [-.2, -.2],
-  [-2, -.2], [-2, .2], [-.2, .2]]
-];
+  triangle: [[0, -2], [-1, 2], [1, 2]],
+
+  plus: [[-.2, 2], [.2, 2], [.2, .2],
+    [2, .2], [2, -.2], [.2, -.2],
+    [.2, -2], [-.2, -2], [-.2, -.2],
+    [-2, -.2], [-2, .2], [-.2, .2]],
+
+  circle: [0,0]
+}
 
 class Boid {
   constructor(x, y) {
@@ -24,7 +24,7 @@ class Boid {
     this.sight = 50; //the view radius of each boid for calculating movement
     this.maxSpeed = randomGaussian(4, .1);
     this.maxForce = randomGaussian(.4, 0.005);
-    this.shape = random(shapes);
+    this.shape = random(Object.keys(shapes)); //picks a random shape type
   }
 
   run(power) {
@@ -45,13 +45,22 @@ class Boid {
     // Draw a triangle rotated in the direction of velocity
     fill(this.color);
     stroke(this.color);
-    strokeWeight(1);
+    strokeWeight(.6);
+
     push();
     translate(this.pos.x, this.pos.y);
     rotate(this.vel.heading() + radians(90));
+
     beginShape();
     scale(this.r);
-    this.shape.forEach(v => vertex(v[0], v[1]));
+
+    if(this.shape == "circle") {
+      fill(this.color.)
+      ellipse(0,0, this.r);
+    } else {
+      shapes[this.shape].forEach(v => vertex(v[0], v[1]));
+    }
+
     endShape(CLOSE);
     pop();
   }
