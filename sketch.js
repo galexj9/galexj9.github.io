@@ -6,6 +6,7 @@ let music;
 function setup() {
   noStroke(90);
   colorMode(HSB);
+
   if(isMobileDevice()) {
     createCanvas(displayWidth, displayHeight);
     boidCount = 20;
@@ -17,12 +18,15 @@ function setup() {
   //default separation, alignment, and cohesion values
   sliders = createSliders(1.5, 1, 1);
 
-  music = loadSound("AmbientMotivational.mp3");
-
   for(let i = 0; i < boidCount; i++)
     boids.push(new Boid(width/2, height/2));
 
   frameRate(60);
+  music.play();
+}
+
+function preload() {
+  music = loadSound("AmbientMotivational.mp3");
 }
 
 //loops once a frame to draw and run the boidos
@@ -62,7 +66,6 @@ function mouseDragged() {
 }
 
 function mousePressed() {
-  music.isPlaying()? music.stop(): music.play();
   if(mouseX > 100 && mouseY > 50)
     boids.push(new Boid(mouseX, mouseY));
 }
