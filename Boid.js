@@ -108,19 +108,21 @@ class Boid {
     //steer to avoid flockmates that are too close
     let desireDist = 10;
     let steer = createVector(0,0);
-    if(n.length == 0) return createVector(0,0);
+    let count = 0;
     for(let i = 0; i < n.length; i++) {
       let d = this.getBoidDist(n[i]);
-      let diff = p5.Vector.sub(this.pos, n[i].pos);
-      diff.normalize();
-      diff.div(d);
-      steer.add(diff);
+      if(d > 0 && d < desireDist) {
+        let diff = p5.Vector.sub(this.pos, n[i].pos);
+        diff.setMag(1/d);
+        steer.add(diff);
+        count++;
+      }
     }
-    steer.div(n.length);
+    if(count > 0)
+      steer.div(count);
 
-    if (steer.magSq() > 0) {
-      steer.normalize();
-      steer.mult(this.maxSpeed);
+    if(steer.magSq() > 0) {
+      steer.setMag(this.maxSpeed);
       steer.sub(this.vel);
       steer.limit(this.maxForce);
     }
