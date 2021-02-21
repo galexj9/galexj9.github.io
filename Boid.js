@@ -20,8 +20,8 @@ class Boid {
     this.vel = p5.Vector.random2D();
     this.acc = createVector(0, 0);
     this.color = color(random(360), random(75, 100), random(75, 100));  //colorMode is HSB from sketch setup()
-    this.r = random(width/400, width/200); //adjust addForce(f) if changed
-    this.sight = 125; //the view radius of each boid for calculating movement
+    this.r = random((width+height)/800, (width+height)/400); //adjust addForce(f) if changed
+    this.sight = 50; //the view radius of each boid for calculating movement
     this.maxSpeed = randomGaussian(4, .1);
     this.maxForce = randomGaussian(.4, 0.005);
     this.shape = random(shapes);
@@ -106,14 +106,16 @@ class Boid {
 
   sep(n) {
     //steer to avoid flockmates that are too close
-    let desireDist = 10;
+    let desireDist = 25;
     let steer = createVector(0,0);
     let count = 0;
     for(let i = 0; i < n.length; i++) {
       let d = this.getBoidDist(n[i]);
+      let diff = p5.Vector.sub(this.pos, n[i].pos);
+      diff.normalize();
+
       if(d > 0 && d < desireDist) {
-        let diff = p5.Vector.sub(this.pos, n[i].pos);
-        diff.setMag(1/d);
+        diff.div(d);
         steer.add(diff);
         count++;
       }
@@ -122,7 +124,8 @@ class Boid {
       steer.div(count);
 
     if(steer.magSq() > 0) {
-      steer.setMag(this.maxSpeed);
+      steer.normalize();
+      steer.mult(this.maxSpeed);
       steer.sub(this.vel);
       steer.limit(this.maxForce);
     }
