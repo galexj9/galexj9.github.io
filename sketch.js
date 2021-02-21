@@ -1,15 +1,23 @@
 
 let boids = [];
-let boidCount = 75;
 let sliders;
+let music;
 
 function setup() {
   noStroke(90);
   colorMode(HSB);
-  createCanvas(window.innerWidth - 20, window.innerHeight - 20);
+  if(isMobileDevice()) {
+    createCanvas(displayWidth, displayHeight);
+    boidCount = 20;
+  } else {
+    createCanvas(window.innerWidth - 20, window.innerHeight - 20);
+    boidCount = 75;
+  }
 
   //default separation, alignment, and cohesion values
   sliders = createSliders(1.5, 1, 1);
+
+  music = loadSound("AmbientMotivational.mp3");
 
   for(let i = 0; i < boidCount; i++)
     boids.push(new Boid(width/2, height/2));
@@ -40,7 +48,7 @@ function createSliders(x,y,z) {
   alignSlider.position(100, 30);
   alignSlider.style('width', '80px');
 
-  cohetSlider = createSlider(0, 5, z, .1);
+  cohetSlider = createSlider(0, 3, z, .1);
   cohetSlider.position(200, 30);
   cohetSlider.style('width', '80px');
 
@@ -54,6 +62,7 @@ function mouseDragged() {
 }
 
 function mousePressed() {
+  music.isPlaying()? music.stop(): music.play();
   if(mouseX > 100 && mouseY > 50)
     boids.push(new Boid(mouseX, mouseY));
 }
@@ -61,3 +70,7 @@ function mousePressed() {
 function windowResized() {
   resizeCanvas(window.innerWidth - 20, window.innerHeight - 20);
 }
+
+function isMobileDevice() {
+    return (typeof window.orientation !== "undefined") || (navigator.userAgent.indexOf('IEMobile') !== -1);
+};
