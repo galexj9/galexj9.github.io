@@ -88,7 +88,6 @@ class Boid {
   //calculate the distance between boids factoring in the screen wrapping
   //this is toroidal space
   getBoidDist(b) {
-    /*
     let dx = abs(this.pos.x - b.pos.x);
     if(dx > width/2)
       dx = width - dx;
@@ -96,18 +95,6 @@ class Boid {
     if(dy > height/2)
       dy = height - dy;
     return dx*dx + dy*dy;
-    */
-    return p5.Vector.dist(this.pos, b.pos);
-  }
-
-//maps a relative boid position in the toroidal space back to cartesian corrodinates for doing math to
-  unwrapPos(b) {
-    let mappedPos = b.pos;
-    if(abs(this.pos.x - b.pos.x) > width/2)
-      mappedPos.x = width - mappedPos.x;
-    if(abs(this.pos.y - b.pos.y) > height/2)
-      mappedPos.y = height - mappedPos.y;
-    return mappedPos;
   }
 
   update() {
