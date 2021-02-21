@@ -1,10 +1,7 @@
 
 let boids = [];
 let boidCount = 50;
-let sepSlider;
-let alignSlider;
-let cohetSlider;
-let power;
+let sliders;
 
 function setup() {
   noStroke(90);
@@ -12,7 +9,7 @@ function setup() {
   createCanvas(window.innerWidth - 20, window.innerHeight - 20);
 
   //default separation, alignment, and cohesion values
-  createSliders(1.8, 1, 1);
+  sliders = createSliders(1.6, 1.2, 1.2);
 
   for(let i = 0; i < boidCount; i++)
     boids.push(new Boid(width/2, height/2));
@@ -20,24 +17,21 @@ function setup() {
   frameRate(60);
 }
 
+//loops once a frame to draw and run the boidos
 function draw() {
-  background(color(frameCount/6 % 360, 50 + noise(frameCount/500)*50, 50 + noise((frameCount+50)/200)*20));
+  background(color(frameCount/6 % 360, 30 + noise(frameCount/500)*20, 60 + noise((frameCount+50)/200)*20));
 
-  power.set(sepSlider.value(), alignSlider.value(), cohetSlider.value());
-
+  let power = createVector(sliders.x.value(), sliders.y.value(), sliders.z.value());
   boids.forEach(boid => boid.run(power));
 
-  if(frameRate() < 32)
-    lotterySacrifice(); //self- explanatory, we sacrifice boids to the lag gods
+  if(boids.length > 200)
+    boids.splice(random(boids.length), 1);
 }
 
+//setup function
 function createSliders(x,y,z) {
-  power = createVector(x,y,z);
+  let sepSlider, alignSlider, cohetSlider;
 
-  textSize(30);
-  fill(0, 0, 100);
-
-  text("Separation", 10, 10)
   sepSlider = createSlider(0, 5, x, .05);
   sepSlider.position(10, 30);
   sepSlider.style('width', '80px');
@@ -49,6 +43,8 @@ function createSliders(x,y,z) {
   cohetSlider = createSlider(0, 5, z, .05);
   cohetSlider.position(200, 30);
   cohetSlider.style('width', '80px');
+
+  return createVector(sepSlider, alignSlider, cohetSlider);
 }
 
 function mouseDragged() {
@@ -64,9 +60,4 @@ function mousePressed() {
 
 function windowResized() {
   resizeCanvas(window.innerWidth - 20, window.innerHeight - 20);
-}
-
-function lotterySacrifice() {
-  console.log("framerate: " + frameRate() + " boids: " + boids.length);
-  boids.splice(random(boids.length), 1);
 }

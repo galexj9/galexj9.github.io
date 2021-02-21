@@ -56,7 +56,7 @@ class Boid {
     pop();
   }
 
-  flock() {
+  flock(power) {
     //find local flockmates within this.sight distance
     let neighbors = [];
     for(let i = 0; i < boids.length; i++) {
