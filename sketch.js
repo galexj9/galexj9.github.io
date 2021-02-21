@@ -74,6 +74,18 @@ function windowResized() {
   resizeCanvas(window.innerWidth - 20, window.innerHeight - 20);
 }
 
+function keyPressed() {
+  if (keyCode == 32) {
+    if(music.isPlaying()) {
+      music.stop();
+      noLoop();
+    } else {
+      music.play();
+      loop();
+    }
+  }
+}
+
 function isMobileDevice() {
     return (typeof window.orientation !== "undefined") || (navigator.userAgent.indexOf('IEMobile') !== -1);
 };
