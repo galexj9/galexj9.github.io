@@ -7,6 +7,7 @@ function setup() {
   noStroke(90);
   colorMode(HSB);
 
+  let boidCount;
   if(isMobileDevice()) {
     createCanvas(displayWidth, displayHeight);
     boidCount = 20;
