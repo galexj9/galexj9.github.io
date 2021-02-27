@@ -1,5 +1,5 @@
 let boids = [];
-let sliders;
+let power;
 let music;
 
 function preload() {
@@ -13,7 +13,7 @@ function setup() {
   createCanvas(window.innerWidth - 20, window.innerHeight - 20);
 
   //default separation, alignment, and cohesion values
-  sliders = createSliders(1.5, 1, 1);
+  power = createSliders(1.5, 1, 1);
 
   for (let i = 0; i < boidCount; i++)
     boids.push(new Boid(randomGaussian(width / 2, width / 10), randomGaussian(height / 2, height / 10)));
@@ -27,7 +27,6 @@ function draw() {
   //(360, 100, 100) -> (360, 10-50, 40-80)
   background(color(frameCount / 6 % 360, 30 + 20 * noise(frameCount / 500), 60 + 20 * noise((frameCount + 10) / 200)));
 
-  let power = createVector(sliders.x.value(), sliders.y.value(), sliders.z.value());
   boids.forEach(boid => boid.run(power));
 
   if (boids.length > 200)
@@ -50,7 +49,7 @@ function createSliders(x, y, z) {
   cohetSlider.position(200, 30);
   cohetSlider.style('width', '80px');
 
-  return createVector(sepSlider, alignSlider, cohetSlider);
+  return createVector(sepSlider.value(), alignSlider.value(), cohetSlider.value());
 }
 
 function mouseDragged() {
@@ -68,6 +67,7 @@ function windowResized() {
   resizeCanvas(window.innerWidth - 20, window.innerHeight - 20);
 }
 
+//toggle play/pause for music and drawloop with the space-bar
 function keyPressed() {
   if (keyCode == 32) {
     if (music.isPlaying()) {

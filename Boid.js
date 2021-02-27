@@ -41,7 +41,7 @@ class Boid {
     this.color = color(random(360), random(60, 95), random(50, 95)); //colorMode is HSB from sketch setup()
     this.r = randomGaussian((width + height) / 600, .1); //attempt auto sizing
     this.sight = 800; //the view radius of each boid for calculating movement
-    this.maxSpeed = 3// randomGaussian(3, .002); //randomGaussian(median, stdDeviation);
+    this.maxSpeed = randomGaussian(3, .002); //randomGaussian(median, stdDeviation);
     this.maxForce = randomGaussian(.4, 0.002);
     this.shape = "triangle" //random(Object.keys(shapes)); //picks a random shape type
 
@@ -57,7 +57,36 @@ class Boid {
     this.draw();
   }
 
-//loop the boids around the bordres of the screne -> toroidal space
+  flock(power) {
+    //find local flockmates within this.sight distance
+    let neighbors = [];
+    for (let i = 0; i < boids.length; i++) {
+      let d = this.getBoidDist(boids[i]);
+      if (d > 0 && d < this.sight)
+      neighbors.push(boids[i]);
+    }
+
+    let sep = this.sep(neighbors); // Separation
+    let ali = this.align(neighbors); // Alignment
+    let coh = this.cohet(neighbors); // Cohesion
+
+    sep.mult(power.x);
+    ali.mult(power.y);
+    coh.mult(power.z);
+
+    this.addForce(sep);
+    this.addForce(ali);
+    this.addForce(coh);
+  }
+
+  update() {
+    this.vel.add(this.acc);
+    this.vel.limit(this.maxSpeed);
+    this.pos.add(this.vel);
+    this.acc.mult(0);
+  }
+
+  //loop the boids around the bordres of the screne -> toroidal space
   borders() {
     if (this.pos.x < -this.r) this.pos.x = width + this.r;
     if (this.pos.y < -this.r) this.pos.y = height + this.r;
@@ -85,28 +114,6 @@ class Boid {
     pop();
   }
 
-  flock(power) {
-    //find local flockmates within this.sight distance
-    let neighbors = [];
-    for (let i = 0; i < boids.length; i++) {
-      let d = this.getBoidDist(boids[i]);
-      if (d > 0 && d < this.sight)
-        neighbors.push(boids[i]);
-    }
-
-    let sep = this.sep(neighbors); // Separation
-    let ali = this.align(neighbors); // Alignment
-    let coh = this.cohet(neighbors); // Cohesion
-
-    sep.mult(power.x);
-    ali.mult(power.y);
-    coh.mult(power.z);
-
-    this.addForce(sep);
-    this.addForce(ali);
-    this.addForce(coh);
-  }
-
   addForce(force) {
     //A = Force/Mass
     force.div(this.r);
@@ -115,7 +122,6 @@ class Boid {
   }
 
   //calculate the distance between boids factoring in the screen wrapping
-  //this is toroidal space
   getBoidDist(b) {
     let dx = abs(this.pos.x - b.pos.x);
     if (dx > width / 2)
@@ -126,16 +132,10 @@ class Boid {
     return dx * dx + dy * dy;
   }
 
-  update() {
-    this.vel.add(this.acc);
-    this.vel.limit(this.maxSpeed);
-    this.pos.add(this.vel);
-    this.acc.mult(0);
-  }
-
+  //Avoid really close buds
   sep(n) {
     //steer to avoid flockmates that are too close
-    const desireDist = 200;
+    const desireDist = 300;
     let vec = createVector(0, 0);
     let count = 0;
 
