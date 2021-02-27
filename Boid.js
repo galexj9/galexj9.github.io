@@ -1,6 +1,6 @@
 //shapes should be size (-2, -2) x (2, 2)
 //forward facing negative y
-let shapes = {
+const shapes = {
   star: [[-0.6, 0.6], [0, 2], [0.6, 0.6], [2, 0],
     [0.6, -0.4], [0, -2], [-0.6, -0.4], [-2, 0]],
 
@@ -19,11 +19,12 @@ class Boid {
     this.pos = createVector(x, y);
     this.vel = p5.Vector.random2D();
     this.acc = createVector(0, 0);
+
     this.color = color(random(360), random(75, 100), random(75, 100));  //colorMode is HSB from sketch setup()
-    this.r = random((width+height)/800, (width+height)/400); //adjust addForce(f) if changed
-    this.sight = 50; //the view radius of each boid for calculating movement
-    this.maxSpeed = randomGaussian(4, .1);
-    this.maxForce = randomGaussian(.4, 0.005);
+    this.r = randomGaussian((width+height)/600, .1); //attempt auto sizing
+    this.sight = 800; //the view radius of each boid for calculating movement
+    this.maxSpeed = randomGaussian(3, .002);  //randomGaussian(median, stdDeviation);
+    this.maxForce = randomGaussian(.4, 0.002);
     this.shape = random(Object.keys(shapes)); //picks a random shape type
   }
 
@@ -42,10 +43,9 @@ class Boid {
   }
 
   draw() {
-    // Draw a triangle rotated in the direction of velocity
     fill(this.color);
     stroke(this.color);
-    strokeWeight(.6);
+    strokeWeight(.6); //smooths the shapos
 
     push();
     translate(this.pos.x, this.pos.y);
@@ -55,7 +55,7 @@ class Boid {
     scale(this.r);
 
     if(this.shape == "circle") {
-      ellipse(0,0, this.r);
+      ellipse(0,0, 2);
     } else {
       shapes[this.shape].forEach(v => vertex(v[0], v[1]));
     }
@@ -88,7 +88,7 @@ class Boid {
 
   addForce(force) {
     //A = Force/Mass
-    force.div(this.r/3); // 3 is the minimum mass, scale to 1
+    force.div(this.r);
     force.limit(this.maxForce);
     this.acc.add(force);
   }
@@ -114,7 +114,7 @@ class Boid {
 
   sep(n) {
     //steer to avoid flockmates that are too close
-    let desireDist = 25;
+    const desireDist = 200;
     let steer = createVector(0,0);
     let count = 0;
     for(let i = 0; i < n.length; i++) {
@@ -128,6 +128,7 @@ class Boid {
         count++;
       }
     }
+
     if(count > 0)
       steer.div(count);
 
@@ -145,35 +146,18 @@ class Boid {
     //steer towards average heading of flockmates
     let avgVel = createVector(0,0);
     n.forEach(boid => avgVel.add(boid.vel));
-    if(n.length > 0) {
-      avgVel.div(n.length);
-      avgVel.normalize();
-      avgVel.mult(this.maxSpeed);
-      let steer = p5.Vector.sub(avgVel, this.vel);
-      steer.limit(this.maxForce);
-      return steer;
-    } else {
-      return createVector(0,0);
-    }
+    return (n.length > 0)? this.steer(avgVel, this.vel): createVector(0,0);
   }
 
 //steer towars the average position of local flockmates
   cohet(n) {
     let avgPos = createVector(0,0);
-    //unwrap the toroidal position of the boids back to cartesian space
     n.forEach(boid => avgPos.add(boid.pos));
-    if(n.length > 0) {
-      avgPos.div(n.length);
+    return (n.length > 0)? this.steer(avgPos, this.pos): createVector(0,0);
+  }
 
-      let desired = p5.Vector.sub(avgPos, this.pos);
-      desired.normalize();
-      desired.mult(this.maxSpeed);
-      let steer = p5.Vector.sub(desired, this.vel);
-      steer.limit(this.maxForce);
-      return steer;
-    } else {
-      return createVector(0, 0);
-    }
-
+  steer(towards, from) {
+    let desired = p5.Vector.sub(towards, from);
+    return desired.limit(this.maxForce);
   }
 }
