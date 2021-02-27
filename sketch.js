@@ -2,8 +2,11 @@ let boids = [];
 let sliders;
 let music;
 
+function preload() {
+  music = loadSound("AmbientMotivational.mp3");
+}
+
 function setup() {
-  noStroke(90);
   colorMode(HSB);
 
   let boidCount = isMobileDevice() ? 50 : 100;
@@ -18,15 +21,9 @@ function setup() {
   music.play();
 }
 
-function preload() {
-  music = loadSound("AmbientMotivational.mp3");
-}
-
 //loops once a frame to draw and run the boidos
 function draw() {
   //changes the color smoothly using color(hue, sat, lightness)
-  //noise() returns a smooth perlin noise value from 0 to 1
-  //dividing the frameCount slows how fast the color changes
   //(360, 100, 100) -> (360, 10-50, 40-80)
   background(color(frameCount / 6 % 360, 30 + 20 * noise(frameCount / 500), 60 + 20 * noise((frameCount + 10) / 200)));
 

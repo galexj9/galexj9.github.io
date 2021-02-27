@@ -57,6 +57,7 @@ class Boid {
     this.draw();
   }
 
+//loop the boids around the bordres of the screne -> toroidal space
   borders() {
     if (this.pos.x < -this.r) this.pos.x = width + this.r;
     if (this.pos.y < -this.r) this.pos.y = height + this.r;
@@ -72,7 +73,6 @@ class Boid {
     push();
     translate(this.pos.x, this.pos.y);
     rotate(this.vel.heading() + radians(90));
-
     beginShape();
     scale(this.r);
 
@@ -81,7 +81,6 @@ class Boid {
     } else {
       shapes[this.shape].forEach(v => vertex(v[0], v[1]));
     }
-
     endShape(CLOSE);
     pop();
   }
@@ -141,9 +140,7 @@ class Boid {
     let count = 0;
 
     n.forEach(b => {
-      let diff = p5.Vector.sub(this.pos, b.pos);
-      diff.setMag(this.maxSpeed);
-
+      let diff = p5.Vector.sub(this.pos, b.pos).setMag(this.maxSpeed);
       let d = this.getBoidDist(b);
       if (d > 0 && d < desireDist) {
         vec.add(diff.div(d));
