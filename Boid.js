@@ -40,10 +40,10 @@ class Boid {
   constructor(x, y) {
     this.color = color(random(360), random(60, 95), random(50, 95)); //colorMode is HSB from sketch setup()
     this.r = randomGaussian((width + height) / 600, .1); //attempt auto sizing
-    this.sight = 800; //the view radius of each boid for calculating movement
-    this.maxSpeed = randomGaussian(3, .002); //randomGaussian(median, stdDeviation);
-    this.maxForce = randomGaussian(.4, 0.002);
-    this.shape = "triangle" //random(Object.keys(shapes)); //picks a random shape type
+    this.sight = 1000; //the view radius of each boid for calculating movement
+    this.maxSpeed = randomGaussian(3, .02); //randomGaussian(median, stdDeviation);
+    this.maxForce = randomGaussian(.8, 0.02);
+    this.shape = random(Object.keys(shapes)); //picks a random shape type
 
     this.pos = createVector(x, y);
     this.vel = p5.Vector.random2D().setMag(this.maxSpeed);
@@ -105,11 +105,14 @@ class Boid {
     beginShape();
     scale(this.r);
 
-    if (this.shape == "circle") {
-      ellipse(0, 0, 2);
-    } else {
-      shapes[this.shape].forEach(v => vertex(v[0], v[1]));
+    switch(this.shape) {
+      case "circle":
+        ellipse(0,0,2);
+        break;
+      default:
+        shapes[this.shape].forEach(v => vertex(v[0], v[1]));
     }
+
     endShape(CLOSE);
     pop();
   }
